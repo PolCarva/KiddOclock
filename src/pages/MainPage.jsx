@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import { get, off, onValue, push, ref, set } from "firebase/database";
 import ChildrenList from "../components/ChildrenList";
 import toast from "react-hot-toast";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaPowerOff } from "react-icons/fa";
 import ChildModal from "../components/ChildModal";
 import ScanningModal from "../components/ScanningModal";
 
@@ -64,7 +64,6 @@ const MainPage = () => {
       toast.error("Debes ingresar un nombre");
       return;
     }
-    
 
     setIsScanning(true);
 
@@ -158,6 +157,23 @@ const MainPage = () => {
     }
   };
 
+  const toggleLed = async () => {
+    console.log("Turning LED");
+    try {
+      const ledRef = ref(database, `isLedOn`);
+      const ledSnapshot = await get(ledRef);
+      const ledValue = ledSnapshot.val();
+      const isLedOn = ledValue;
+      await set(ledRef, !ledValue);
+      if (isLedOn) {
+        const parentToggleRef = ref(database, `parentToggle`);
+        await set(parentToggleRef, true);
+      }
+    } catch (error) {
+      console.error("Error turning LED: ", error);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -175,6 +191,12 @@ const MainPage = () => {
           }}
         >
           <FaPlus className="h-8 w-8" />
+        </button>
+        <button
+          className="flex justify-center items-center h-16 w-16 fixed bottom-5 left-5 aspect-square rounded-full text-4xl font-bold text-white bg-red-500 hover:bg-red-600r"
+          onClick={toggleLed}
+        >
+          <FaPowerOff className="h-8 w-8" />
         </button>
         <ChildModal
           isModalOpen={isModalOpen}
