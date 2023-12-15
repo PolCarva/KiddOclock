@@ -28,6 +28,7 @@ const RegisterPage = () => {
         email: mail,
         password: password,
         token: userId + "-token",
+        id: userId,
       });
 
       toast.success("Account created successfully");

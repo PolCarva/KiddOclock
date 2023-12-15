@@ -5,7 +5,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    console.log("Cerrar sesión");
     localStorage.removeItem("userToken");
     navigate("/login");
   };
@@ -17,7 +16,7 @@ const Header = () => {
         onClick={handleLogout}
         className="px-3 py-1 rounded text-white bg-red-500 hover:bg-red-600"
       >
-        Cerrar Sesión
+        Sign Out
       </button>
     </header>
   );

@@ -7,7 +7,7 @@ const ChildrenList = ({ children, toggleModal }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {children.length === 0 && <p className="text-center text-slate-400">No hay niños registrados</p>}
+      {children.length === 0 && <p className="text-center text-slate-400">No children registered</p>}
       {children.map((child) => (
         <div
           key={child.id}

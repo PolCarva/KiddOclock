@@ -23,17 +23,13 @@ const ChildModal = ({
     }
 
     try {
-      const childRef = ref(
-        database,
-        `Users/${user.uid}/children/${activeChild.id}`
-      );
+      const childRef = ref(database, `Children/${activeChild.id}`);
       await remove(childRef);
       toggleModal(null); // Cierra el modal después de eliminar.
     } catch (error) {
       console.error("Error al eliminar niño: ", error);
     }
   };
-  
 
   return (
     <div

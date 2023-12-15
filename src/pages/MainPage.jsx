@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { database } from "../config/firebaseConfig";
 import Header from "../components/Header";
-import { off, onValue, push, ref, set } from "firebase/database";
+import { get, off, onValue, push, ref, set } from "firebase/database";
 import ChildrenList from "../components/ChildrenList";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
@@ -64,6 +64,7 @@ const MainPage = () => {
       toast.error("Debes ingresar un nombre");
       return;
     }
+    
 
     setIsScanning(true);
 
@@ -74,18 +75,38 @@ const MainPage = () => {
       onValue(scanningRef, async (snapshot) => {
         const isScanningDB = snapshot.val();
         if (!isScanningDB) {
-          // Verificar la variable sincrónica
-          const childRef = ref(database, `Children/`);
-          const newChildRef = push(childRef);
-          await set(newChildRef, {
-            name: childName,
-            screenTime: screenTime,
-            parent: user.uid,
-          });
-          toast.success("Niño agregado");
+          const newKidRef = ref(database, `newKid`);
 
-          setIsScanning(false);
-          off(scanningRef);
+          try {
+            const newKidSnapshot = await get(newKidRef);
+            const newKidValue = newKidSnapshot.val();
+
+            if (newKidValue !== null) {
+              const childRef = ref(database, `Children/${newKidValue}`);
+              await set(childRef, {
+                name: childName,
+                screenTime: screenTime,
+                parent: user.id,
+              });
+
+              toast.success("Niño agregado");
+              await set(newKidRef, null);
+              setIsScanning(false);
+              off(scanningRef);
+            } else {
+              console.log(
+                "El valor de newKid en la base de datos es nulo o no existe."
+              );
+              setIsScanning(false);
+              off(scanningRef);
+            }
+          } catch (error) {
+            console.error(
+              "Error al obtener el valor de newKid desde la base de datos:",
+              error
+            );
+            setIsScanning(false);
+          }
         }
       });
     } catch (error) {
@@ -122,13 +143,15 @@ const MainPage = () => {
     try {
       // Update the scanning status in Firebase
       const scanningRef = ref(database, `scanning`);
+      const newKidRef = ref(database, `newKid`);
+      await set(newKidRef, null);
       await set(scanningRef, false);
 
       // Update local state to reflect the cancellation and set the cancellation flag
       setIsScanning(false);
 
       // Provide feedback to the user
-      toast.success("Scanning cancelled");
+      toast.error("Scanning cancelled");
     } catch (error) {
       console.error("Error cancelling scan: ", error);
       toast.error("Error cancelling scan");
@@ -140,7 +163,7 @@ const MainPage = () => {
       <Header />
       <div className="p-4">
         <ChildrenList
-          children={children.filter((child) => child.parent === user.uid)}
+          children={children.filter((child) => child.parent === user.id)}
           toggleModal={toggleModal}
           setChildName={setChildName}
         />
