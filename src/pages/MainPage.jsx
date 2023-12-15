@@ -12,7 +12,7 @@ import ScanningModal from "../components/ScanningModal";
 const MainPage = () => {
   const navigate = useNavigate();
   const [children, setChildren] = useState([]);
-  const [user, setUser] = useState(localStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [childName, setChildName] = useState("");
   const [screenTime, setScreenTime] = useState(0);
@@ -35,7 +35,7 @@ const MainPage = () => {
   useEffect(() => {
     if (!user) return;
 
-    const childrenRef = ref(database, `Users/${user.uid}/children`);
+    const childrenRef = ref(database, `Children`);
     onValue(childrenRef, (snapshot) => {
       const childrenData = snapshot.val();
       const childrenList = [];
@@ -75,9 +75,13 @@ const MainPage = () => {
         const isScanningDB = snapshot.val();
         if (!isScanningDB) {
           // Verificar la variable sincrónica
-          const childRef = ref(database, `Users/${user.uid}/children`);
+          const childRef = ref(database, `Children/`);
           const newChildRef = push(childRef);
-          await set(newChildRef, { name: childName, screenTime: screenTime });
+          await set(newChildRef, {
+            name: childName,
+            screenTime: screenTime,
+            parent: user.uid,
+          });
           toast.success("Niño agregado");
 
           setIsScanning(false);
@@ -136,7 +140,7 @@ const MainPage = () => {
       <Header />
       <div className="p-4">
         <ChildrenList
-          children={children}
+          children={children.filter((child) => child.parent === user.uid)}
           toggleModal={toggleModal}
           setChildName={setChildName}
         />
