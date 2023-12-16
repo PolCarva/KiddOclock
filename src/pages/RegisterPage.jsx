@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 import { database } from "../config/firebaseConfig";
-import { push, ref, set } from "firebase/database";
+import { get, push, ref, set } from "firebase/database";
 import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
@@ -25,6 +25,19 @@ const RegisterPage = () => {
     }
 
     try {
+
+      //verificar que el usuario no exista
+      const usersRef = ref(database, "Users");
+      const snapshot = await get(usersRef);
+      if (snapshot.exists()) {
+        const users = snapshot.val();
+        for (const id in users) {
+          if (users[id].email === mail) {
+            toast.error("User already exists");
+            return;
+          }
+        }
+      }
       // Generar un nuevo ID de usuario
       const userId = push(ref(database, "Users")).key;
 
