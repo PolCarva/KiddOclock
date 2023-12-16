@@ -14,6 +14,11 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!mail || !password || !confirmPassword) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
