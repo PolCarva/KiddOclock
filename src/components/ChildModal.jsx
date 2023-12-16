@@ -85,7 +85,7 @@ const ChildModal = ({
             className="px-3 py-1 rounded text-white bg-red-500 hover:bg-red-600"
             onClick={handleDeleteChild}
           >
-            Eliminar Niño
+            Delete Kid
           </button>
         )}
 
@@ -96,7 +96,7 @@ const ChildModal = ({
             handleSave();
           }}
         >
-          Guardar
+          Save
         </button>
       </div>
     </div>

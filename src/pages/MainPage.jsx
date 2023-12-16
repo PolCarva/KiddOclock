@@ -27,7 +27,7 @@ const MainPage = () => {
     reset();
 
     if (!localStorage.getItem("token")) {
-      toast.error("Debes iniciar sesión");
+      toast.error("Log in first");
       navigate("/login");
     }
   }, []);
@@ -61,7 +61,7 @@ const MainPage = () => {
 
   const handleAddChild = async () => {
     if (!childName || !user) {
-      toast.error("Debes ingresar un nombre");
+      toast.error("Pick a name first");
       return;
     }
 
@@ -88,7 +88,7 @@ const MainPage = () => {
                 parent: user.id,
               });
 
-              toast.success("Niño agregado");
+              toast.success("Child added successfully");
               await set(newKidRef, null);
               setIsScanning(false);
               off(scanningRef);
@@ -116,7 +116,7 @@ const MainPage = () => {
 
   const handleUpdateChild = async () => {
     if (!childName || !user || !activeChild) {
-      toast.error("Debes ingresar un nombre");
+      toast.error("Pick a name first");
       return;
     }
     try {
