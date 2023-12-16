@@ -122,7 +122,7 @@ const MainPage = () => {
     try {
       const childRef = ref(
         database,
-        `Users/${user.uid}/children/${activeChild.id}`
+        `Children/${activeChild.id}`
       );
       await set(childRef, {
         ...activeChild,
